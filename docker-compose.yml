@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  api:
+    build: 
+      context: ./server
+      target: dev
+    ports:
+      - 5000:5000
+    volumes:
+      - ./server:/final-task
+    depends_on:
+      - database
+    container_name: golang-docker-api
+    env_file: ./server/.env
+      # environment:
+      # - 'DB_PORT=3306'
+      #- 'DB_HOST=database'
+
+  database:
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: golang-docker
+    container_name: golang-docker-db
+    ports:
+      - 3306:3306
+    volumes:
+      - golang-docker-data:/var/lib/mysql 
+
+
+  react:
+    container_name: golang-docker-react
+    image: app-dev
+    build: 
+      context: ./client
+      target: development
+    volumes: 
+      - ./client/src:/app/src
+    ports: 
+      - 5173:5173
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - database
+    ports:
+      - 5003:80
+    environment:
+      - 'PMA_HOST=database'
+      - 'PMA_PORT=3306'
+    container_name: golang-docker-pma
+
+
+# persisted storage
+volumes:
+  golang-docker-data:

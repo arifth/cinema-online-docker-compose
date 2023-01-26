@@ -18,7 +18,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/gorilla/mux"
-	"github.com/k0kubun/pp"
 
 	// package for midtrans
 
@@ -133,13 +132,14 @@ func (h *Bookhandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 	dataFilmId, _ := strconv.Atoi(r.FormValue("film_id"))
 
 	request = bookdto.CreateTransactionRequest{
+		ID:            TransactionId,
 		Price:         dataPrice,
 		Status:        "pending",
 		TransferProof: resp.SecureURL,
 		FilmId:        dataFilmId,
-		AccountNumber: TransactionId,
-		OrderDate:     r.FormValue("order_date"),
-		UserId:        userId,
+		// AccountNumber: r.FormValue(""),
+		OrderDate: r.FormValue("order_date"),
+		UserId:    userId,
 	}
 
 	// validate request against struct form created
@@ -153,15 +153,14 @@ func (h *Bookhandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	book := models.Book{
+		ID:            TransactionId,
 		Price:         dataPrice,
 		Status:        request.Status,
 		TransferProof: request.TransferProof,
 		FilmId:        request.FilmId,
-		// Film:          models.FilmResponse{},
 		AccountNumber: request.AccountNumber,
 		OrderDate:     request.OrderDate,
 		UserId:        userId,
-		// User:          models.UserResponse{},
 	}
 
 	newTransaction, err := h.BookRepository.CreateBook(book)
@@ -171,16 +170,14 @@ func (h *Bookhandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err.Error())
 
 	}
-	dataTransactions, err := h.BookRepository.FindBook(int(newTransaction.Model.ID))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(err.Error())
-		return
-	}
+	// dataTransactions, err := h.BookRepository.FindBook(int(newTransaction.ID))
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	json.NewEncoder(w).Encode(err.Error())
+	// 	return
+	// }
 
-	pp.Println(dataTransactions.Price)
-
-	newData, err := h.BookRepository.FindBook(int(dataTransactions.Model.ID))
+	newData, err := h.BookRepository.FindBook(newTransaction.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(err.Error())
@@ -191,7 +188,7 @@ func (h *Bookhandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 	s.New(os.Getenv("SERVER_KEY"), midtrans.Sandbox)
 
 	req := &snap.Request{
-		TransactionDetails: midtrans.TransactionDetails{OrderID: strconv.Itoa(int(dataTransactions.Model.ID)), GrossAmt: int64(dataTransactions.Price)},
+		TransactionDetails: midtrans.TransactionDetails{OrderID: strconv.Itoa(int(newTransaction.ID)), GrossAmt: int64(newTransaction.Price)},
 		CreditCard: &snap.CreditCardDetails{
 			Secure: true,
 		},
@@ -202,8 +199,6 @@ func (h *Bookhandler) CreateBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	snapResp, _ := s.CreateTransaction(req)
-
-	pp.Println(snapResp)
 
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: snapResp}

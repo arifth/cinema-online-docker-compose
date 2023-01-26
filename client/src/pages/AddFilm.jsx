@@ -1,5 +1,5 @@
 import NavBar from "../components/NavBar";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   FormControl,
   InputGroup,
@@ -15,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { API } from "../config/api";
 import { useQuery } from "react-query";
+import Proof from "../assets/proof.svg";
 
 export default function AddFilm() {
   const [input, setInput] = useState({
@@ -26,6 +27,8 @@ export default function AddFilm() {
     description: "",
     thumbnnail: "",
   });
+
+  const inputFile = useRef(null);
 
   let { data: category } = useQuery("categoryCache", async () => {
     const response = await API.get("/categories");
@@ -79,14 +82,23 @@ export default function AddFilm() {
             />
             <InputGroup width={"20%"}>
               <Input
-                bgColor={"#343434"}
-                placeholder="attach a thumbnail"
+                style={{ display: "none" }}
                 type="file"
                 name="file"
+                ref={inputFile}
                 onChange={(e) =>
                   setInput({ ...input, file: e.target.files[0] })
                 }
               />
+              <Button
+                onClick={() => inputFile.current.click()}
+                bgColor={"primary"}
+                width={"100%"}
+                padding={"1.5rem"}
+              >
+                Attach Payment
+                <img src={Proof} alt="proof" style={{ marginLeft: "1rem" }} />
+              </Button>
             </InputGroup>
           </HStack>
           <Select

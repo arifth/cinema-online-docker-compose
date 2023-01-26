@@ -1,6 +1,7 @@
 package dto
 
 type CreateTransactionRequest struct {
+	ID            int    `json:"id`
 	Price         int    `json:"price"`
 	Status        string `json:"status"`
 	TransferProof string `json:"transfer_proof"`

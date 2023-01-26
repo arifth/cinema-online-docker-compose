@@ -1,9 +1,8 @@
 package models
 
-import "gorm.io/gorm"
-
 type Book struct {
-	gorm.Model
+	// gorm.Model
+	ID            int          `json:"book_id"`
 	Price         int          `json:"price"`
 	Status        string       `json:"status"`
 	TransferProof string       `json:"transfer_proof"`
@@ -16,7 +15,8 @@ type Book struct {
 }
 
 type BookResponse struct {
-	gorm.Model
+	// gorm.Model
+	ID            int          `json:"book_id"`
 	Price         int          `json:"price"`
 	Status        string       `json:"status"`
 	TransferProof string       `json:"transfer_proof"`

@@ -17,18 +17,18 @@ export default function UserListFilms() {
 
   let { id } = useParams();
 
-  const filtered = books?.filter((book) => {
-    if (book?.user_id === id) {
-      return trans;
-    }
-  });
-
-  console.log(filtered);
+  // const filtered = books?.filter((book) => {
+  //   if (book?.user_id === id) {
+  //     return trans;
+  //   }
+  // });
 
   return (
     <>
       <NavBar />
-      <Heading>My List Film</Heading>
+      <Heading textAlign="center" fontSize="6xl">
+        My List Film
+      </Heading>
       <ListFilms />
     </>
   );

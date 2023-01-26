@@ -11,7 +11,7 @@ type BookRepository interface {
 	FindBooks() ([]models.Book, error)
 	FindBook(id int) (models.Book, error)
 	CreateBook(book models.Book) (models.Book, error)
-	UpdateBook(status string, ID uint) (models.Book, error)
+	UpdateBook(status string, ID int) (models.Book, error)
 	// DeleteTrip(trip models.Trip, id int) (models.Trip, error)
 }
 
@@ -44,7 +44,7 @@ func (r *repository) CreateBook(book models.Book) (models.Book, error) {
 
 }
 
-func (r *repository) UpdateBook(status string, ID uint) (models.Book, error) {
+func (r *repository) UpdateBook(status string, ID int) (models.Book, error) {
 
 	pp.Println(status)
 

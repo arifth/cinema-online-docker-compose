@@ -4,11 +4,12 @@ import Hero from "../components/Hero";
 import ListFilms from "../components/ListFilms";
 
 export default function Home() {
+  const heading = "List of FIlms ";
   return (
     <>
       <NavBar />
       <Hero />
-      <ListFilms />
+      <ListFilms heading={heading} />
     </>
   );
 }

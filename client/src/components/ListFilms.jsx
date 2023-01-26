@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { API } from "../config/api";
 import { useQuery } from "react-query";
 
-export default function ListFilms() {
+export default function ListFilms({ heading }) {
   const navigate = useNavigate();
   let { data: films } = useQuery("filmCache", async () => {
     let data = await API.get("/films");
@@ -16,7 +16,7 @@ export default function ListFilms() {
   return (
     <>
       <Heading w={"100%"} mt={"4rem"} paddingLeft={"15rem"}>
-        List of Films
+        {heading}
       </Heading>
       <Flex align={"center"} justify={"center"} p="1rem" gap={"2rem"}>
         {Film.map((film) => {
@@ -30,22 +30,6 @@ export default function ListFilms() {
                   height={"100%"}
                   width={"100%"}
                   objectFit={"cover"}
-                />
-              </Box>
-            </Link>
-          );
-        })}
-        {films?.map((film) => {
-          return (
-            <Link key={film?.ID} to={`/detailFilm/${film?.ID}`}>
-              <Box height={"198px"} width={"143px"} borderRadius={"10px"}>
-                <Image
-                  borderRadius={"10px"}
-                  height={"100%"}
-                  width={"100%"}
-                  objectFit={"cover"}
-                  draggable="false"
-                  src={film?.image}
                 />
               </Box>
             </Link>

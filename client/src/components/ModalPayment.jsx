@@ -29,27 +29,9 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
 
   const inputFile = useRef(null);
 
-  // useEffect(() => {
-  //   //change this to the script source you want to load, for example this is snap.js sandbox env
-  //   const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-  //   //change this according to your client-key
-  //   const myMidtransClientKey = "SB-Mid-client-X1qte313qM27Xpbq";
-
-  //   let scriptTag = document.createElement("script");
-  //   scriptTag.src = midtransScriptUrl;
-  //   // optional if you want to set script attribute
-  //   // for example snap.js have data-client-key attribute
-  //   scriptTag.setAttribute("data-client-key", myMidtransClientKey);
-
-  //   document.body.appendChild(scriptTag);
-  //   return () => {
-  //     document.body.removeChild(scriptTag);
-  //   };
-  // }, []);
-
   const [state, dispatch] = useContext(UserContext);
 
-  const handleSubmit = useMutation(async (data) => {
+  const handleSubmit = useMutation(async () => {
     try {
       const config = {
         method: "POST",
@@ -64,9 +46,10 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
       });
 
       const date = new Date().toString();
+      console.log(date);
       let data = new FormData();
-      data.append("price", input?.price);
-      data.append("image", input?.file);
+      data.append("price", input.price);
+      data.append("image", input.file);
       data.append("account_number", input.accNumber);
       data.append("order_date", date);
       data.append("film_id", "1");
@@ -75,24 +58,17 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
       const response = await API.post("/book", data, config);
 
       const token = response.data.data.token;
-      console.log(response.data.data.error_messages);
+      console.log(token);
 
       window.snap.pay(token, {
         onSuccess: function (result) {
-          /* You may add your own implementation here */
           console.log(result);
-          // navigate("/payment");
-          // window.location.reload()
         },
         onPending: function (result) {
-          /* You may add your own implementation here */
           console.log(result);
-          // navigate("/payment");
-          // window.location.reload()
         },
         onError: function (result) {
           navigate("/payment");
-          // console.log(result);
         },
       });
       return response.data;
@@ -100,6 +76,22 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
       console.log(error);
     }
   });
+
+  useEffect(() => {
+    //change this to the script source you want to load, for example this is snap.js sandbox env
+    const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+    //change this according to your client-key
+    const myMidtransClientKey = "SB-Mid-client-X1qte313qM27Xpbq";
+
+    let scriptTag = document.createElement("script");
+    scriptTag.src = midtransScriptUrl;
+    // optional if you want to set script attribute
+    scriptTag.setAttribute("data-client-key", myMidtransClientKey);
+    document.body.appendChild(scriptTag);
+    return () => {
+      document.body.removeChild(scriptTag);
+    };
+  }, []);
 
   return (
     <>
@@ -119,7 +111,7 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
               <Text fontSize={"2.5rem"}> {title}</Text>
               <Divider />
               <Text fontSize={"2rem"}>
-                Total :{" "}
+                Total :
                 <span style={{ color: "#CD2E71" }}>
                   Rp{price?.toLocaleString()}
                 </span>
@@ -157,7 +149,7 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
               </HStack>
               <Button
                 bgColor={"primary"}
-                onClick={(e) => handleSubmit.mutate(e)}
+                onClick={() => handleSubmit.mutate()}
                 width={"100%"}
               >
                 {handleSubmit.isLoading ? (
@@ -168,8 +160,8 @@ export default function ModalPayment({ isOpen, onClose, title, price }) {
                         marginLeft={"1rem"}
                         thickness="10px"
                         speed="0.65s"
-                        emptyColor="gray.200"
-                        color="blue.500"
+                        emptyColor="gray.800"
+                        color="grey.500"
                         size="l"
                       />
                     </Center>

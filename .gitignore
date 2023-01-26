@@ -28,6 +28,8 @@ dist-ssr
 
 # env 
 
-./*/.env
+.env
+server/.env
+client/.env
 
 
